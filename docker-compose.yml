@@ -12,3 +12,6 @@ services:
       SESSION: # Pyrogram string session
       AUTH: # User ID of Bot owner
       FORCESUB: # Username name of public channel without using '@'
+      # optionals
+      MAX_SPLIT_SIZE: # max file split size, if you don't have telegram premium - default is 2GB, if you have premium skip this option
+      BATCH_SIZE: # batch size - default is 100

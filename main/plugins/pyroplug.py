@@ -5,6 +5,9 @@ import asyncio, time, os
 from .. import bot as Drone
 from main.plugins.progress import progress_for_pyrogram
 from main.plugins.helpers import screenshot
+from main.utils import isPremium
+from main.plugins.splitter import split_video, do_file_split
+
 
 from pyrogram import Client, filters
 from pyrogram.errors import ChannelBanned, ChannelInvalid, ChannelPrivate, ChatIdInvalid, ChatInvalid, PeerIdInvalid
@@ -94,47 +97,98 @@ async def get_msg(userbot, client, bot, sender, edit_id, msg_link, i):
                 )
             elif msg.media==MessageMediaType.VIDEO and msg.video.mime_type in ["video/mp4", "video/x-matroska"]:
                 print("Trying to get metadata")
-                data = video_metadata(file)
-                height, width, duration = data["height"], data["width"], data["duration"]
-                print(f'd: {duration}, w: {width}, h:{height}')
-                try:
-                    thumb_path = await screenshot(file, duration, sender)
-                except Exception:
-                    thumb_path = None
-                await client.send_video(
-                    chat_id=sender,
-                    video=file,
-                    caption=caption,
-                    supports_streaming=True,
-                    height=height, width=width, duration=duration, 
-                    thumb=thumb_path,
-                    progress=progress_for_pyrogram,
-                    progress_args=(
-                        client,
-                        '**UPLOADING:**\n',
-                        edit,
-                        time.time()
+                if (not (await isPremium(userbot)) and os.path.getsize(file) > 2 * 1024 * 1024 * 1024):
+                    splitted_files = split_video(file)
+                    for file in splitted_files:
+                        data = video_metadata(file)
+                        height, width, duration = data["height"], data["width"], data["duration"]
+                        try:
+                            thumb_path = await screenshot(file, duration, sender)
+                        except Exception:
+                            thumb_path = None
+
+                        await client.send_video(
+                            chat_id=sender,
+                            video=file,
+                            caption=caption,
+                            supports_streaming=True,
+                            height=height, width=width, duration=duration,
+                            thumb=thumb_path,
+                            progress=progress_for_pyrogram,
+                            progress_args=(
+                                client, "**UPLOADING**\n",
+                                edit,
+                                time.time()
+                            )
+                        )
+
+                        # clean up
+                        try:
+                            os.remove(file)
+                        except:
+                            pass
+                else:
+                    data = video_metadata(file)
+                    height, width, duration = data["height"], data["width"], data["duration"]
+                    print(f'd: {duration}, w: {width}, h:{height}')
+                    try:
+                        thumb_path = await screenshot(file, duration, sender)
+                    except Exception:
+                        thumb_path = None
+
+                    await client.send_video(
+                        chat_id=sender,
+                        video=file,
+                        caption=caption,
+                        supports_streaming=True,
+                        height=height, width=width, duration=duration,
+                        thumb=thumb_path,
+                        progress=progress_for_pyrogram,
+                        progress_args=(
+                            client,
+                            '**UPLOADING:**\n',
+                            edit,
+                            time.time()
+                        )
                     )
-                )
             
             elif msg.media==MessageMediaType.PHOTO:
                 await edit.edit("Uploading photo.")
                 await bot.send_file(sender, file, caption=caption)
             else:
-                thumb_path=thumbnail(sender)
-                await client.send_document(
-                    sender,
-                    file, 
-                    caption=caption,
-                    thumb=thumb_path,
-                    progress=progress_for_pyrogram,
-                    progress_args=(
-                        client,
-                        '**UPLOADING:**\n',
-                        edit,
-                        time.time()
+                thumb_path = thumbnail(sender)
+                if (not (await isPremium(client)) and os.path.getsize(file)):
+                    # splitting the files
+                    splitted_files = do_file_split(file)
+                    for file in splitted_files:
+                        await client.send_docment(
+                            sender,
+                            file,
+                            caption=caption,
+                            thumb_path=thumb_path,
+                            progress=progress_for_pyrogram,
+                            progress_args=(
+                                client,
+                                '**UPLOADING:**\n',
+                                edit,
+                                time.time()
+                            )
+                        )
+
+                else:
+                    await client.send_document(
+                        sender,
+                        file,
+                        caption=caption,
+                        thumb=thumb_path,
+                        progress=progress_for_pyrogram,
+                        progress_args=(
+                            client,
+                            '**UPLOADING:**\n',
+                            edit,
+                            time.time()
+                        )
                     )
-                )
             try:
                 os.remove(file)
                 if os.path.isfile(file) == True:
