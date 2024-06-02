@@ -4,6 +4,8 @@ from main.utils import load_plugins
 import logging
 from . import bot
 
+from main.utils import logger
+
 logging.basicConfig(format='[%(levelname) 5s/%(asctime)s] %(name)s: %(message)s',
                     level=logging.WARNING)
 
@@ -16,8 +18,8 @@ for name in files:
         load_plugins(plugin_name.replace(".py", ""))
 
 #Don't be a thief 
-print("Successfully deployed!")
-print("By MaheshChauhan • DroneBots")
+logger.info("Successfully deployed!")
+logger.info("By MaheshChauhan • DroneBots")
 
 if __name__ == "__main__":
     bot.run_until_disconnected()

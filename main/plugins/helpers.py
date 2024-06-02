@@ -1,5 +1,7 @@
 #Github.com/Vasusen-code
 
+from main.utils import logger
+
 from pyrogram.errors import FloodWait, InviteHashInvalid, InviteHashExpired, UserAlreadyParticipant
 from telethon import errors, events
 
@@ -20,7 +22,7 @@ async def join(client, invite_link):
     except FloodWait:
         return "Too many requests, try again later."
     except Exception as e:
-        print(e)
+        logger.error(e)
         return "Could not join, try joining manually."
     
 #Regex---------------------------------------------------------------------------------------------------------------

@@ -4,6 +4,9 @@ import importlib
 from pathlib import Path
 from pyrogram import Client
 
+import logzero
+
+logger = logzero.logger
 
 def load_plugins(plugin_name):
     path = Path(f"main/plugins/{plugin_name}.py")

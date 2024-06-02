@@ -7,7 +7,7 @@ from main.plugins.progress import progress_for_pyrogram
 from main.plugins.helpers import screenshot
 from main.utils import isPremium
 from main.plugins.splitter import split_video, do_file_split
-
+from main.utils import logger
 
 from pyrogram import Client, filters
 from pyrogram.errors import ChannelBanned, ChannelInvalid, ChannelPrivate, ChatIdInvalid, ChatInvalid, PeerIdInvalid
@@ -67,17 +67,16 @@ async def get_msg(userbot, client, bot, sender, edit_id, msg_link, i):
                     time.time()
                 )
             )
-            print(file)
+            logger.info(file)
             await edit.edit('Preparing to Upload!')
             caption = None
             if msg.caption is not None:
                 caption = msg.caption
             if msg.media==MessageMediaType.VIDEO_NOTE:
                 round_message = True
-                print("Trying to get metadata")
+                logger.info("Trying to get metadata")
                 data = video_metadata(file)
                 height, width, duration = data["height"], data["width"], data["duration"]
-                print(f'd: {duration}, w: {width}, h:{height}')
                 try:
                     thumb_path = await screenshot(file, duration, sender)
                 except Exception:
@@ -96,12 +95,12 @@ async def get_msg(userbot, client, bot, sender, edit_id, msg_link, i):
                     )
                 )
             elif msg.media==MessageMediaType.VIDEO and msg.video.mime_type in ["video/mp4", "video/x-matroska"]:
-                print("Trying to get metadata")
+                logger.info("Trying to get metadata")
                 if (not (await isPremium(userbot)) and os.path.getsize(file) > 2 * 1024 * 1024 * 1024 ):
                     try:
                         splitted_files = split_video(file)
                         if not splitted_files:
-                            print(splitted_files)
+                            logger.info(file)
                             raise Exception("The input files are corrupt")
                         for file in splitted_files:
                             data = video_metadata(file)
@@ -147,7 +146,7 @@ async def get_msg(userbot, client, bot, sender, edit_id, msg_link, i):
                 else:
                     data = video_metadata(file)
                     height, width, duration = data["height"], data["width"], data["duration"]
-                    print(f'd: {duration}, w: {width}, h:{height}')
+                    logger.info(f'd: {duration}, w: {width}, h:{height}')
                     try:
                         thumb_path = await screenshot(file, duration, sender)
                     except Exception:
@@ -242,7 +241,7 @@ async def get_msg(userbot, client, bot, sender, edit_id, msg_link, i):
                 new_link = f"t.me/b/{chat}/{msg_id}"
             return await get_msg(userbot, client, bot, sender, edit_id, msg_link, i)
         except Exception as e:
-            print(e)
+            logger.error(e)
             if "messages.SendMedia" in str(e) \
             or "SaveBigFilePartRequest" in str(e) \
             or "SendMediaRequest" in str(e) \
@@ -264,7 +263,7 @@ async def get_msg(userbot, client, bot, sender, edit_id, msg_link, i):
                     if os.path.isfile(file) == True:
                         os.remove(file)
                 except Exception as e:
-                    print(e)
+                    logger.error(e)
                     await client.edit_message_text(sender, edit_id, f'Failed to save: `{msg_link}`\n\nError: {str(e)}')
                     try:
                         os.remove(file)
@@ -296,7 +295,7 @@ async def get_msg(userbot, client, bot, sender, edit_id, msg_link, i):
                 return await get_msg(userbot, client, bot, sender, edit_id, new_link, i)
             await client.copy_message(sender, chat, msg_id)
         except Exception as e:
-            print(e)
+            logger.error(e)
             return await client.edit_message_text(sender, edit_id, f'Failed to save: `{msg_link}`\n\nError: {str(e)}')
         await edit.delete()
         

@@ -7,6 +7,7 @@ from .. import userbot, Bot
 from .. import FORCESUB as fs
 from main.plugins.pyroplug import get_msg
 from main.plugins.helpers import get_link, join
+from main.utils import loggger
 
 from telethon import events
 from pyrogram.errors import FloodWait
@@ -44,6 +45,6 @@ async def clone(event):
     except FloodWait as fw:
         return await Drone.send_message(event.sender_id, f'Try again after {fw.x} seconds due to floodwait from telegram.')
     except Exception as e:
-        print(e)
+        loggger.error(e)
         await Drone.send_message(event.sender_id, f"An error occurred during cloning of `{link}`\n\n**Error:** {str(e)}")
     

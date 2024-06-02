@@ -12,6 +12,8 @@ from .. import userbot, Bot, AUTH
 from .. import FORCESUB as fs
 from main.plugins.pyroplug import get_bulk_msg
 from main.plugins.helpers import get_link, screenshot
+from main.utils import logger
+
 
 from telethon import events, Button, errors
 from telethon.tl.types import DocumentAttributeVideo
@@ -56,14 +58,14 @@ async def _batch(event):
                     await conv.send_message("No link found.")
                     return conv.cancel()
             except Exception as e:
-                print(e)
+                logger.error(e)
                 await conv.send_message("Cannot wait more longer for your response!")
                 return conv.cancel()
             await conv.send_message("Send me the number of files/range you want to save from the given message, as a reply to this message.", buttons=Button.force_reply())
             try:
                 _range = await conv.get_reply()
             except Exception as e:
-                print(e)
+                logger.error(e)
                 await conv.send_message("Cannot wait more longer for your response!")
                 return conv.cancel()
             try:
@@ -98,7 +100,7 @@ async def run_batch(userbot, client, sender, link, _range):
                 await client.send_message(sender, "Batch completed.")
                 break
         except Exception as e:
-            print(e)
+            logger.error(e)
             await client.send_message(sender, "Batch completed.")
             break
         try:
