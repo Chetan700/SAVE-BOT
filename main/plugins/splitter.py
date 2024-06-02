@@ -8,10 +8,9 @@ from moviepy.editor import VideoFileClip
 
 logger = logzero.logger
 
-MAX_SPLIT_SIZE = config("MAX_SPLIT_SIZE", default=2000)
-MAX_SPLIT_SIZE = 2000
+MAX_SPLIT_SIZE = config("MAX_SPLIT_SIZE", default=2*1024)
 
-def split_video(video_path:str, size='2G'):
+def split_video(video_path:str):
     sleep(3)
     clip = VideoFileClip(video_path)
     duration = clip.duration
@@ -78,11 +77,7 @@ def file_split_7z(file_path, split_size=MAX_SPLIT_SIZE):
         return file_path_7z_list
 
 
-def do_file_split(file_path, split_size=MAX_SPLIT_SIZE):
-        file_size = os.path.getsize(file_path) / 2 ** 20
-        split_part = math.ceil(file_size / split_size)
-        new_split_size = math.ceil(file_size / split_part)
-        logger.info("file size | {} | split num | {} | split size | {}".format(file_size, split_part, new_split_size))
-        file_path_7z_list = file_split_7z(file_path, split_size=new_split_size)
-        logger.info(file_path_7z_list)
+def do_file_split(file_path):
+        file_path_7z_list = file_split_7z(file_path)
         return file_path_7z_list
+
