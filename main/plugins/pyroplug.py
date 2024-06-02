@@ -97,36 +97,53 @@ async def get_msg(userbot, client, bot, sender, edit_id, msg_link, i):
                 )
             elif msg.media==MessageMediaType.VIDEO and msg.video.mime_type in ["video/mp4", "video/x-matroska"]:
                 print("Trying to get metadata")
-                if (not (await isPremium(userbot)) and os.path.getsize(file) > 2 * 1024 * 1024 * 1024):
-                    splitted_files = split_video(file)
-                    for file in splitted_files:
-                        data = video_metadata(file)
-                        height, width, duration = data["height"], data["width"], data["duration"]
-                        try:
-                            thumb_path = await screenshot(file, duration, sender)
-                        except Exception:
-                            thumb_path = None
-
-                        await client.send_video(
-                            chat_id=sender,
-                            video=file,
-                            caption=caption,
-                            supports_streaming=True,
-                            height=height, width=width, duration=duration,
-                            thumb=thumb_path,
-                            progress=progress_for_pyrogram,
-                            progress_args=(
-                                client, "**UPLOADING**\n",
-                                edit,
-                                time.time()
+                if (not (await isPremium(userbot)) and os.path.getsize(file) > 2 * 1024 * 1024 * 1024 ):
+                    try:
+                        splitted_files = split_video(file)
+                        if not splitted_files:
+                            print(splitted_files)
+                            raise Exception("The input files are corrupt")
+                        for file in splitted_files:
+                            data = video_metadata(file)
+                            height, width, duration = data["height"], data["width"], data["duration"]
+                            try:
+                                thumb_path = await screenshot(file, duration, sender)
+                            except Exception:
+                                thumb_path = None
+                            await client.send_video(
+                                chat_id=sender,
+                                video=file,
+                                caption=caption,
+                                supports_streaming=True,
+                                height=height, width=width, duration=duration,
+                                thumb=thumb_path,
+                                progress=progress_for_pyrogram,
+                                progress_args=(
+                                    client, "**UPLOADING**\n",
+                                    edit,
+                                    time.time()
+                                )
                             )
-                        )
+
+                            # clean up
+                            try:
+                                os.remove(file)
+                            except:
+                                try:
+                                    os.remove(file)
+                                except:
+                                    pass
 
                         # clean up
                         try:
                             os.remove(file)
                         except:
-                            pass
+                            try:
+                                os.remove(file)
+                            except:
+                                pass
+                    except Exception as e:
+                        await client.send_message(sender, f"An error occured while splitting the file\n\n{e}")
                 else:
                     data = video_metadata(file)
                     height, width, duration = data["height"], data["width"], data["duration"]
@@ -157,15 +174,15 @@ async def get_msg(userbot, client, bot, sender, edit_id, msg_link, i):
                 await bot.send_file(sender, file, caption=caption)
             else:
                 thumb_path = thumbnail(sender)
-                if (not (await isPremium(client)) and os.path.getsize(file)):
+                if (not (await isPremium(client)) and os.path.getsize(file) > 2 * 1024 * 1024 * 1024):
                     # splitting the files
                     splitted_files = do_file_split(file)
                     for file in splitted_files:
-                        await client.send_docment(
+                        await client.send_document(
                             sender,
                             file,
                             caption=caption,
-                            thumb_path=thumb_path,
+                            thumb=thumb_path,
                             progress=progress_for_pyrogram,
                             progress_args=(
                                 client,
@@ -175,6 +192,23 @@ async def get_msg(userbot, client, bot, sender, edit_id, msg_link, i):
                             )
                         )
 
+                        # clean up
+                        try:
+                            os.remove(file)
+                        except:
+                            try:
+                                os.remove(file)
+                            except:
+                                pass
+
+                    # clean up
+                    try:
+                        os.remove(file)
+                    except:
+                        try:
+                            os.remove(file)
+                        except:
+                            pass
                 else:
                     await client.send_document(
                         sender,

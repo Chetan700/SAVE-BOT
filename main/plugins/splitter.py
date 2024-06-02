@@ -3,22 +3,45 @@ import os
 import math
 import logzero
 from decouple import config
+from time import sleep
+from moviepy.editor import VideoFileClip
 
 logger = logzero.logger
 
 MAX_SPLIT_SIZE = config("MAX_SPLIT_SIZE", default=2000)
+MAX_SPLIT_SIZE = 2000
 
+def split_video(video_path:str, size='2G'):
+    sleep(3)
+    clip = VideoFileClip(video_path)
+    duration = clip.duration
+    half_duration = duration / 2
 
-def split_video(video_path, size='2G'):
     base_path, ext = os.path.splitext(video_path)
-    output_path_template = f"{base_path}_part%03d{ext}"
+    base_path = "_".join(base_path.split())
+    output_path_template = f"{base_path}_part%2d{ext}"
 
-    split_command = f"ffmpeg -i {video_path} -c copy -map 0 -segment_time 00:20:00 -f segment -reset_timestamps 1 {output_path_template}"
-    subprocess.call(split_command, shell=True)
+    file_name = video_path.split("/")[-1]
+    directory = video_path.split("/")[0:-1]
+    directory = "/".join(directory)
+    video_path = f"{directory}/'{file_name}'"
 
-    video_paths = [f"{base_path}_part{str(i).zfill(3)}{ext}" for i in range(999) if os.path.exists(f"{base_path}_part{str(i).zfill(3)}{ext}")]
 
-    return video_paths
+    try:
+        split_command = f"ffmpeg -i {video_path} -loglevel fatal -c copy -segment_time {half_duration} -f segment -reset_timestamps 1 {output_path_template}"
+        return_code = subprocess.call(split_command, shell=True)
+        if return_code != 0:
+            print(f"Error: ffmpeg command failed with return code {return_code}")
+            return []
+
+        sleep(3)
+
+        video_paths = [f"{base_path}_part0{i}{ext}" for i in range(5) if os.path.exists(f"{base_path}_part0{i}{ext}")]
+        return video_paths
+    except:
+        print("Error")
+        return []
+
 
 
 def file_split_7z(file_path, split_size=MAX_SPLIT_SIZE):
