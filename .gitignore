@@ -32,6 +32,7 @@ venv.bak/
 
 # Pyrogram/Telethon specific
 *.session
+*.session-journal
 
 # Local environment variables
 .env.local
@@ -41,3 +42,7 @@ venv.bak/
 
 # Log files
 *.log
+
+# test files
+*.test
+
