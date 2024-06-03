@@ -5,13 +5,15 @@
 Plugin for both public & private channels!
 """
 
-import time, os, asyncio
+import time, os, asyncio, decouple
 
 from .. import bot as Drone
 from .. import userbot, Bot, AUTH
 from .. import FORCESUB as fs
 from main.plugins.pyroplug import get_bulk_msg
 from main.plugins.helpers import get_link, screenshot
+from main.utils import logger
+
 
 from telethon import events, Button, errors
 from telethon.tl.types import DocumentAttributeVideo
@@ -26,6 +28,8 @@ ft = f"To use this bot you've to join @{fs}."
 
 batch = []
 
+BATCH_SIZE = decouple.config("BATCH_SIZE", 100)
+
 @Drone.on(events.NewMessage(incoming=True, from_users=AUTH, pattern='/cancel'))
 async def cancel(event):
     if not event.sender_id in batch:
@@ -37,7 +41,7 @@ async def cancel(event):
 async def _batch(event):
     if not event.is_private:
         return
-    s, r = await force_sub(event.client, fs, event.sender_id, ft) 
+    s, r = await force_sub(event.client, fs, event.sender_id, ft)
     if s == True:
         await event.reply(r)
         return       
@@ -54,19 +58,19 @@ async def _batch(event):
                     await conv.send_message("No link found.")
                     return conv.cancel()
             except Exception as e:
-                print(e)
+                logger.error(e)
                 await conv.send_message("Cannot wait more longer for your response!")
                 return conv.cancel()
             await conv.send_message("Send me the number of files/range you want to save from the given message, as a reply to this message.", buttons=Button.force_reply())
             try:
                 _range = await conv.get_reply()
             except Exception as e:
-                print(e)
+                logger.error(e)
                 await conv.send_message("Cannot wait more longer for your response!")
                 return conv.cancel()
             try:
                 value = int(_range.text)
-                if value > 100:
+                if value > BATCH_SIZE:
                     await conv.send_message("You can only get upto 100 files in a single batch.")
                     return conv.cancel()
             except ValueError:
@@ -96,7 +100,7 @@ async def run_batch(userbot, client, sender, link, _range):
                 await client.send_message(sender, "Batch completed.")
                 break
         except Exception as e:
-            print(e)
+            logger.error(e)
             await client.send_message(sender, "Batch completed.")
             break
         try:

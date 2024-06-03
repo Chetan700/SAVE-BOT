@@ -1,0 +1,48 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# PyCharm
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# VSCode
+.vscode/
+.vscode/settings.json
+.vscode/tasks.json
+.vscode/launch.json
+.vscode/extensions.json
+.vscode/*.code-workspace
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Pyrogram/Telethon specific
+*.session
+*.session-journal
+
+# Local environment variables
+.env.local
+.env.dev
+.env.test
+.env.prod
+
+# Log files
+*.log
+
+# test files
+*.test
+

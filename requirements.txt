@@ -6,3 +6,5 @@ cryptg
 tgcrypto
 pyrogram
 python-decouple
+logzero
+moviepy

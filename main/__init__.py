@@ -8,6 +8,8 @@ from telethon.sync import TelegramClient
 from decouple import config
 import logging, time, sys
 
+from main.utils import logger
+
 logging.basicConfig(format='[%(levelname) 5s/%(asctime)s] %(name)s: %(message)s',
                     level=logging.WARNING)
 
@@ -19,6 +21,7 @@ SESSION = config("SESSION", default=None)
 FORCESUB = config("FORCESUB", default=None)
 AUTH = config("AUTH", default=None, cast=int)
 
+
 bot = TelegramClient('bot', API_ID, API_HASH).start(bot_token=BOT_TOKEN) 
 
 userbot = Client("saverestricted", session_string=SESSION, api_hash=API_HASH, api_id=API_ID) 
@@ -26,7 +29,7 @@ userbot = Client("saverestricted", session_string=SESSION, api_hash=API_HASH, ap
 try:
     userbot.start()
 except BaseException:
-    print("Userbot Error ! Have you added SESSION while deploying??")
+    logger.error("Userbot Error ! Have you added SESSION while deploying??")
     sys.exit(1)
 
 Bot = Client(
@@ -39,5 +42,5 @@ Bot = Client(
 try:
     Bot.start()
 except Exception as e:
-    print(e)
+    logger.error(e)
     sys.exit(1)
