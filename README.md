@@ -1,47 +1,48 @@
+### 标题
 <h1 align="center">
-  <b>Save restricted content Bot</b>
+  <b>保存受限内容机器人</b>
 </h1> 
 
-Contact: [Telegram](https://t.me/MaheshChauhan)
+联系方式：[Telegram](https://t.me/MaheshChauhan) 
 
-A stable telegram bot to get restricted messages with custom thumbnail support , made by Mahesh Chauhan. 
+由Mahesh Chauhan制作的稳定Telegram机器人，用于获取自定义缩略图支持的受限消息。
 
-- works for both public and private chats
-- Custom thumbnail support for Pvt medias
-- supports text and webpage media messages
-- Faster speed
-- Forcesubscribe available
-- To save from bots send link in this format : `t.me/b/bot_username/message_id` (use plus messenger for message_id)
-- `/batch` - (For owner only) Use this command to save upto 100 files from a pvt or public restricted channel at once.
-- `/cancel` -  Use this to stop batch
-- Time delay is added to avoid FloodWait and keep user account safe. 
-  
-# Variables
+- 适用于公共和私人聊天
+- 私人媒体的自定义缩略图支持
+- 支持文本和网页媒体消息
+- 更快的速度
+- 强制订阅功能
+- 要从机器人保存，发送此格式的链接：`t.me/b/bot_username/message_id`（使用Plus Messenger获取message_id）
+- `/batch` - （仅限所有者）使用此命令一次最多保存来自私人或公共受限频道的100个文件。
+- `/cancel` - 使用此命令停止批量处理
+- 增加了时间延迟以避免FloodWait并保持用户账户安全。
+
+### 变量
 
 - `API_ID`
 - `API_HASH`
 - `SESSION`
 - `BOT_TOKEN` 
-- `AUTH` - Owner user id
-- `FORCESUB` - Public channel username without '@'. Don't forget to add bot in channel as administrator. 
+- `AUTH` - 所有者用户ID
+- `FORCESUB` - 公共频道用户名，不包含'@'。不要忘记将机器人作为管理员添加到频道中。
 
-# Get API & PYROGRAM string session from:
- 
-API: [API scrapper Bot](https://t.me/USETGSBOT) or [Telegram.org](https://my.telegram.org/auth)
+### 获取API和PYROGRAM字符串会话：
 
-PYROGRAM SESSION: [SessionGen Bot](https://t.me/SessionStringGeneratorRobot) or [![Run on Repl.it](https://replit.com/badge/github/vasusen-code/saverestrictedcontentbot)](https://replit.com/@levinalab/Session-Generator#main.py)
+API: [API抓取机器人](https://t.me/USETGSBOT) 或 [Telegram.org](https://my.telegram.org/auth) 
 
-BOT TOKEN: @Botfather on telegram
+PYROGRAM会话: [SessionGen机器人](https://t.me/SessionStringGeneratorRobot) 或 [![在Repl.it上运行](https://replit.com/badge/github/vasusen-code/saverestrictedcontentbot)](https://replit.com/@levinalab/Session-Generator#main.py) 
 
-# Deploy
+BOT令牌: 电报上的@Botfather
 
-Deploy on `VPS`
+### 部署
 
-Easy Method:
+在`VPS`上部署
 
-- Intall docker-compose
-- Fill in the variables in docker-compose.yml file using your favorite text editor or nano 
-- Start the container 
+简单方法：
+
+- 安装docker-compose
+- 使用您喜欢的文本编辑器或nano填写docker-compose.yml文件中的变量
+- 启动容器
 
 ```
 sudo apt install docker-compose -y
@@ -49,10 +50,10 @@ nano docker-compose.yml
 sudo docker-compose up --build
 ```
 
-The hard Way:
+困难方法：
 
-- Fill vars in your fork in [this](https://github.com/vasusen-code/SaveRestrictedContentBot/blob/master/main/__init__.py) file as shown in this [picture](https://t.me/MaheshChauhan/36)
-- enter all the below commands
+- 在[这个](https://github.com/vasusen-code/SaveRestrictedContentBot/blob/master/main/__init__.py)文件中填写您的分叉中的变量，如[此图](https://t.me/MaheshChauhan/36)所示
+- 输入以下所有命令
 
 ```
 sudo apt update
@@ -63,37 +64,37 @@ pip3 install -r requirements.txt
 python3 -m main
 ```
 
-- if you want bot to be running in background then enter `screen -S srcb` before `python3 -m main` 
-- after `python3 -m main`, click ctrl+A, ctrl+D
-- if you want to stop bot, then enter `screen -r srcb` and to kill screen enter `screen -S srcb -X quit`.
+- 如果您希望机器人在后台运行，则在`python3 -m main`之前输入`screen -S srcb`
+- 在`python3 -m main`之后，点击ctrl+A，ctrl+D
+- 如果您想要停止机器人，那么输入`screen -r srcb`，要杀死屏幕输入`screen -S srcb -X quit`。
 
-Deploy your bot on `Render`
+在`Render`上部署您的机器人
 
-Tutorial - [Click here](https://telegra.ph/SRCB-on-Render-05-17)
+教程 - [点击这里](https://telegra.ph/SRCB-on-Render-05-17) 
 
-Deploy your bot on `heroku`
+在`heroku`上部署您的机器人
 
-» Method - 1:
-- Star the repo, and fork it in desktop mode
-- Go to settings of your forked repo
-- Rename your repo by any other name
-- Click on  [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
- 
-» Method - 2:
-- Star the repo, and fork it in desktop mode
-- create app in heroku
-- go to settings of app›› config vars›› add all variables
-- add buildpacks
-- connect to github and deploy
-- turn on dynos
-  
-Buildpacks for manual deploy:
+方法1：
+- 星标仓库，并在桌面模式下分叉它
+- 转到分叉仓库的设置
+- 将您的仓库重命名为其他名称
+- 点击[![部署](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+
+方法2：
+- 星标仓库，并在桌面模式下分叉它
+- 在heroku上创建应用程序
+- 转到应用程序设置> config vars> 添加所有变量
+- 添加构建包
+- 连接到GitHub并部署
+- 打开dynos
+
+手动部署的构建包：
 
 - `heroku/python`
-- `https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest.git`
+- `https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest.git` 
 
-Deploy your bot on `Okteto` [Useless]
-  
-Tutorial for okteto - [click here](https://telegra.ph/Okteto-Deploy-04-01)
+在`Okteto`上部署您的机器人[无用]
 
-[![Develop on Okteto](https://okteto.com/develop-okteto.svg)](https://cloud.okteto.com)
+Okteto教程 - [点击这里](https://telegra.ph/Okteto-Deploy-04-01) 
+
+[![在Okteto上开发](https://okteto.com/develop-okteto.svg)](https://cloud.okteto.com) 
