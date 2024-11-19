@@ -39,7 +39,7 @@ Deploy on `VPS`
 
 Easy Method:
 
-- Intall docker-compose
+- Install docker-compose
 - Fill in the variables in docker-compose.yml file using your favorite text editor or nano 
 - Start the container 
 
